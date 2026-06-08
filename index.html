@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Compensation Calculator</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0d1117;
+  color: #c9d1d9;
+  min-height: 100vh;
+  padding: 32px 20px 60px;
+}
+
+.container { max-width: 960px; margin: 0 auto; }
+
+h1 {
+  font-size: 30px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #58a6ff, #bc8cff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+
+.subtitle { color: #8b949e; font-size: 15px; margin-bottom: 36px; }
+
+.card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #e6edf3;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title .icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.icon-blue { background: #1f3a5c; }
+.icon-purple { background: #2d1f5c; }
+.icon-green { background: #1f3a2a; }
+.icon-orange { background: #3a2a1f; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 600px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+
+.form-group label {
+  font-size: 13px;
+  color: #8b949e;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.input-wrap { position: relative; }
+
+.input-wrap .prefix {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #484f58;
+  font-size: 14px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.input-wrap .suffix {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #484f58;
+  font-size: 14px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.input-wrap input {
+  width: 100%;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: #e6edf3;
+  font-size: 15px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input-wrap input.has-prefix { padding-left: 26px; }
+.input-wrap input.has-suffix { padding-right: 30px; }
+
+.input-wrap input:focus {
+  outline: none;
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 3px rgba(88,166,255,0.1);
+}
+
+.hint { font-size: 12px; color: #484f58; line-height: 1.4; }
+
+/* Period grid */
+.period-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.period-btn {
+  padding: 11px 8px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 9px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b949e;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.period-btn:hover {
+  border-color: #58a6ff;
+  color: #c9d1d9;
+}
+
+.period-btn.active {
+  background: #1c3152;
+  border-color: #58a6ff;
+  color: #58a6ff;
+}
+
+.period-btn.year-btn.active {
+  background: #2d1f5c;
+  border-color: #bc8cff;
+  color: #bc8cff;
+}
+
+/* Year panels */
+.year-panels { margin-bottom: 20px; }
+
+.year-panel {
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 14px;
+  border: 1px solid #30363d;
+}
+
+.year-panel.full { background: #161b22; }
+.year-panel.prereq {
+  background: #0f1318;
+  border-color: #21262d;
+}
+
+.year-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.year-panel-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.year-panel.full .year-panel-header h3 { color: #e6edf3; }
+.year-panel.prereq .year-panel-header h3 { color: #6e7681; }
+
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+
+.tag-blue { background: #1c3152; color: #58a6ff; }
+.tag-gray { background: #21262d; color: #6e7681; }
+
+/* Calculate button */
+.calc-btn {
+  width: 100%;
+  padding: 17px;
+  background: linear-gradient(135deg, #1f6feb, #8957e5);
+  border: none;
+  border-radius: 11px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 28px;
+  letter-spacing: 0.3px;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.calc-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+.calc-btn:active { transform: translateY(0); }
+
+/* Results */
+.result-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 18px;
+}
+
+.result-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.result-header h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #e6edf3;
+}
+
+.result-header .stock-chip {
+  font-size: 12px;
+  background: #1c3152;
+  color: #58a6ff;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-weight: 600;
+}
+
+.result-section { margin-bottom: 18px; }
+.result-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #484f58;
+  margin-bottom: 10px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 9px 0;
+  border-bottom: 1px solid #1c2128;
+  gap: 16px;
+}
+
+.result-row:last-child { border-bottom: none; }
+
+.result-row .lbl {
+  font-size: 14px;
+  color: #8b949e;
+  flex: 1;
+}
+
+.result-row .lbl .sub {
+  font-size: 12px;
+  color: #484f58;
+  display: block;
+  margin-top: 2px;
+}
+
+.result-row .val {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e6edf3;
+  white-space: nowrap;
+}
+
+.result-row .val.positive { color: #3fb950; }
+
+.result-divider { border: none; border-top: 1px solid #30363d; margin: 16px 0; }
+
+.result-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.result-total .lbl {
+  font-size: 16px;
+  font-weight: 700;
+  color: #c9d1d9;
+}
+
+.result-total .val {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #58a6ff, #bc8cff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.note { font-size: 12px; color: #484f58; margin-top: 14px; line-height: 1.5; }
+.note span { color: #6e7681; }
+
+.rsu-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.rsu-detail-table th {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #484f58;
+  border-bottom: 1px solid #21262d;
+}
+
+.rsu-detail-table td {
+  padding: 8px 10px;
+  color: #8b949e;
+  border-bottom: 1px solid #1c2128;
+}
+
+.rsu-detail-table td:last-child { text-align: right; color: #e6edf3; font-weight: 600; }
+.rsu-detail-table tr:last-child td { border-bottom: none; }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: #484f58;
+  font-size: 15px;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 20px;
+}
+
+.section-divider span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #484f58;
+  white-space: nowrap;
+}
+
+.section-divider::before, .section-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid #21262d;
+}
+
+.vesting-schedule {
+  background: #0d1117;
+  border: 1px solid #21262d;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.vesting-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.vest-pill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.vest-pill.cliff { background: #1c3152; color: #58a6ff; }
+.vest-pill.quarterly { background: #1c2128; color: #8b949e; }
+
+.cumulative-bar {
+  margin-top: 10px;
+  height: 6px;
+  background: #1c2128;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.cumulative-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1f6feb, #8957e5);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Total Compensation Calculator</h1>
+  <p class="subtitle">Model your full comp including salary, bonus, and RSU vesting across time horizons</p>
+
+  <!-- ── BASE INPUTS ────────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-blue">💼</div>
+      Base Information
+    </div>
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Base Salary</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="baseSalary" class="has-prefix" placeholder="" min="0" step="1000">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Sign-on Bonus</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="signOnBonus" class="has-prefix" placeholder="" min="0" step="1000">
+        </div>
+        <p class="hint">Paid once; counted in Year 1 total</p>
+      </div>
+
+      <div class="form-group">
+        <label>Annual Bonus Target %</label>
+        <div class="input-wrap">
+          <input type="number" id="bonusPct" class="has-suffix" placeholder="" min="0" max="200">
+          <span class="suffix">%</span>
+        </div>
+        <p class="hint">Target bonus as % of base salary (e.g. 25)</p>
+      </div>
+
+      <div class="form-group">
+        <label>Max Bonus Payout %</label>
+        <div class="input-wrap">
+          <input type="number" id="maxBonusPct" class="has-suffix" placeholder="" min="100" max="500">
+          <span class="suffix">%</span>
+        </div>
+        <p class="hint">Max multiplier on target bonus (e.g. 200 = 2×)</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── RSU GRANT INPUTS ───────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-purple">📈</div>
+      Initial RSU Grant
+    </div>
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Initial RSU Grant Value</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="initialGrant" class="has-prefix" placeholder="" min="0" step="10000">
+        </div>
+        <p class="hint">Total dollar value of your initial stock grant</p>
+      </div>
+
+      <div class="form-group">
+        <label>Stock Price at Grant Date</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="initialStockPrice" class="has-prefix" placeholder="" min="0.01" step="0.01">
+        </div>
+        <p class="hint">Share price when the initial grant was awarded</p>
+      </div>
+
+    </div>
+
+    <div class="vesting-schedule">
+      <div style="font-size:13px;font-weight:700;color:#8b949e;">Initial Grant Vesting Schedule</div>
+      <div class="vesting-row">
+        <span class="vest-pill cliff">25% cliff at 12 months</span>
+        <span class="vest-pill quarterly">then 6.25% per quarter × 12 quarters</span>
+        <span class="vest-pill quarterly">fully vested at 48 months</span>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:#8b949e;margin-top:16px;">Annual Refresher Grants</div>
+      <div class="vesting-row">
+        <span class="vest-pill cliff">Granted yearly at grant-date anniversary</span>
+        <span class="vest-pill quarterly">6.25% per quarter, no cliff</span>
+        <span class="vest-pill quarterly">fully vested at 48 months from each grant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TIME PERIOD SELECTION ─────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-green">🗓️</div>
+      Select Time Periods to Analyze
+    </div>
+    <div class="period-grid" id="periodGrid"></div>
+  </div>
+
+  <!-- ── DYNAMIC YEAR / PERIOD PANELS ──────────────────────────── -->
+  <div id="yearPanels" class="year-panels"></div>
+
+  <!-- ── CALCULATE ─────────────────────────────────────────────── -->
+  <button class="calc-btn" onclick="calculate()">⚡ Calculate Compensation</button>
+
+  <!-- ── RESULTS ────────────────────────────────────────────────── -->
+  <div id="results"></div>
+
+</div>
+
+<script>
+// ─── Constants ────────────────────────────────────────────────────
+const TIME_PERIODS = [
+  { label: 'Year 1',     months: 12,  isYear: true  },
+  { label: '15 Months',  months: 15,  isYear: false },
+  { label: '18 Months',  months: 18,  isYear: false },
+  { label: '21 Months',  months: 21,  isYear: false },
+  { label: 'Year 2',     months: 24,  isYear: true  },
+  { label: '27 Months',  months: 27,  isYear: false },
+  { label: '30 Months',  months: 30,  isYear: false },
+  { label: '33 Months',  months: 33,  isYear: false },
+  { label: 'Year 3',     months: 36,  isYear: true  },
+  { label: '39 Months',  months: 39,  isYear: false },
+  { label: '42 Months',  months: 42,  isYear: false },
+  { label: '45 Months',  months: 45,  isYear: false },
+  { label: 'Year 4',     months: 48,  isYear: true  },
+];
+
+// Year a month belongs to (1-based, month 12 = year 1, month 13 = year 2)
+function yearOf(m) { return Math.ceil(m / 12); }
+
+const selected = new Set();
+
+// ─── Period Checkbox Grid ─────────────────────────────────────────
+function buildPeriodGrid() {
+  const grid = document.getElementById('periodGrid');
+  TIME_PERIODS.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'period-btn' + (p.isYear ? ' year-btn' : '');
+    el.textContent = p.label;
+    el.dataset.months = p.months;
+    el.addEventListener('click', () => {
+      if (selected.has(p.months)) {
+        selected.delete(p.months);
+        el.classList.remove('active');
+      } else {
+        selected.add(p.months);
+        el.classList.add('active');
+      }
+      renderYearPanels();
+    });
+    grid.appendChild(el);
+  });
+}
+
+// ─── Year Input Panels ────────────────────────────────────────────
+function renderYearPanels() {
+  const container = document.getElementById('yearPanels');
+  container.innerHTML = '';
+
+  if (selected.size === 0) return;
+
+  const maxMonth = Math.max(...selected);
+  const maxYear  = yearOf(maxMonth);
+
+  for (let y = 1; y <= maxYear; y++) {
+    // Any selected period whose year is y?
+    const periodsInYear = [...selected].filter(m => yearOf(m) === y);
+    const hasSelected   = periodsInYear.length > 0;
+
+    // We need year y for the refresher grant that starts at month (y-1)*12
+    // and for stock price context. Always include.
+
+    const panel = document.createElement('div');
+    panel.className = 'year-panel ' + (hasSelected ? 'full' : 'prereq');
+
+    const tag = hasSelected
+      ? `<span class="tag tag-blue">Checkpoint data</span>`
+      : `<span class="tag tag-gray">Prerequisite — needed for calculation</span>`;
+
+    const fullFields = hasSelected ? `
+      <div class="form-group">
+        <label>Expected Base Salary</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="y${y}_base" class="has-prefix" placeholder="" min="0" step="1000">
+        </div>
+        <p class="hint">Leave blank to use the base salary entered above</p>
+      </div>
+      <div class="form-group">
+        <label>Expected Bonus Payout %</label>
+        <div class="input-wrap">
+          <input type="number" id="y${y}_bonusPayout" class="has-suffix" placeholder="" min="0" max="200">
+          <span class="suffix">%</span>
+        </div>
+        <p class="hint">How much of your target bonus you expect to receive (0–200%). E.g. 180 = paying out at 180% of target.</p>
+      </div>
+    ` : '';
+
+    // Stock price placeholder: only show the auto-calc estimate on prereq panels
+    const pricePlaceholder = hasSelected ? '' : `e.g. auto +50%/yr`;
+
+    panel.innerHTML = `
+      <div class="year-panel-header">
+        <h3>Year ${y}</h3>
+        ${tag}
+      </div>
+      <div class="form-grid">
+        ${fullFields}
+        <div class="form-group">
+          <label>Expected Stock Price — End of Year ${y}</label>
+          <div class="input-wrap">
+            <span class="prefix">$</span>
+            <input type="number" id="y${y}_price" class="has-prefix" placeholder="${pricePlaceholder}" min="0.01" step="0.01">
+          </div>
+          <p class="hint">Leave blank → auto-calculated at +50% from prior year</p>
+        </div>
+        <div class="form-group">
+          <label>Year ${y} Refresher Grant %</label>
+          <div class="input-wrap">
+            <input type="number" id="y${y}_refresher" class="has-suffix" placeholder="35" min="0" max="100">
+            <span class="suffix">%</span>
+          </div>
+          <p class="hint">Refresher as % of initial grant (typical 24–40%). Leave blank → 35%</p>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(panel);
+  }
+}
+
+// ─── Vesting Math ─────────────────────────────────────────────────
+
+// Initial grant: 25% cliff at month 12, then 6.25%/quarter for 12 more quarters
+function initialVestedAt(shares, m) {
+  if (m < 12) return 0;
+  const qAfterCliff = Math.floor((m - 12) / 3);
+  return Math.min(shares * 0.25 + shares * qAfterCliff * 0.0625, shares);
+}
+
+// Refresher grant: 6.25%/quarter from grantMonth, no cliff
+function refresherVestedAt(shares, grantMonth, m) {
+  const elapsed = m - grantMonth;
+  if (elapsed <= 0) return 0;
+  const q = Math.floor(elapsed / 3);
+  return Math.min(shares * q * 0.0625, shares);
+}
+
+function vestedDelta(fn, ...args) {
+  // fn(shares, ...fixed, toMonth) - fn(shares, ...fixed, fromMonth)
+  // called as vestedDelta(initial, shares, fromM, toM)
+  //         or vestedDelta(refresher, shares, grantM, fromM, toM)
+  return fn(...args);
+}
+
+// ─── Formatting ───────────────────────────────────────────────────
+function fmtMoney(n) {
+  if (Math.abs(n) >= 1e6) {
+    const m = n / 1e6;
+    return '$' + (Number.isInteger(m * 1000) ? m.toFixed(3) : m.toFixed(3)).replace(/\.?0+$/, '') + 'M';
+  }
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function fmtMoneyFull(n) {
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function fmtShares(n) {
+  return Math.round(n).toLocaleString();
+}
+
+// ─── Vesting Bars Builder ─────────────────────────────────────────
+function buildVestingBars(initialShares, initialStockPrice, refreshers, targetMonth, stockPrice) {
+  let html = '';
+  let totalUnvested = 0;
+
+  // Initial grant bar
+  const initVested    = initialVestedAt(initialShares, targetMonth);
+  const initPct       = Math.min(initVested / initialShares * 100, 100);
+  const initUnvestedShares = Math.max(initialShares - initVested, 0);
+  const initUnvestedValue  = initUnvestedShares * stockPrice;
+  totalUnvested += initUnvestedValue;
+
+  html += vestingBarHTML(
+    'Initial Grant',
+    `${fmtShares(initialShares)} shares @ ${fmtMoneyFull(initialStockPrice)}`,
+    initPct,
+    initVested,
+    initialShares,
+    initUnvestedShares,
+    initUnvestedValue,
+    '#1f6feb',
+    '#58a6ff'
+  );
+
+  // One bar per refresher that has been granted by targetMonth
+  const refresherColors = [
+    ['#5e3fb3', '#bc8cff'],
+    ['#1a6b3c', '#3fb950'],
+    ['#7c3427', '#f78166'],
+    ['#5c4a1e', '#e3b341'],
+  ];
+
+  for (const r of refreshers) {
+    if (r.grantMonth > targetMonth) continue;
+    const rVested    = refresherVestedAt(r.shares, r.grantMonth, targetMonth);
+    const rPct       = Math.min(rVested / r.shares * 100, 100);
+    const rUnvShares = Math.max(r.shares - rVested, 0);
+    const rUnvValue  = rUnvShares * stockPrice;
+    totalUnvested   += rUnvValue;
+    const [c1, c2]   = refresherColors[(r.year - 1) % refresherColors.length];
+
+    html += vestingBarHTML(
+      `Year ${r.year} Refresher`,
+      `${fmtShares(r.shares)} shares @ ${fmtMoneyFull(r.grantPrice)} · grant value ${fmtMoneyFull(r.grantValue)}`,
+      rPct,
+      rVested,
+      r.shares,
+      rUnvShares,
+      rUnvValue,
+      c1,
+      c2
+    );
+  }
+
+  // Total unvested summary
+  html += `
+    <div style="margin-top:16px;padding:14px 16px;background:#0d1117;border:1px solid #30363d;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#c9d1d9;">Total Unvested Equity</div>
+        <div style="font-size:12px;color:#484f58;margin-top:3px;">Earned but not yet vested — across all active grants @ ${fmtMoneyFull(stockPrice)}/share</div>
+      </div>
+      <div style="font-size:22px;font-weight:800;color:#e3b341;">${fmtMoneyFull(totalUnvested)}</div>
+    </div>`;
+
+  return html;
+}
+
+function vestingBarHTML(title, subtitle, pct, vestedShares, totalShares, unvestedShares, unvestedValue, colorDark, colorLight) {
+  const unvestedPct = (100 - pct).toFixed(1);
+  return `
+    <div style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;gap:8px;flex-wrap:wrap;">
+        <div>
+          <span style="font-size:13px;font-weight:700;color:#c9d1d9;">${title}</span>
+          <span style="font-size:11px;color:#484f58;margin-left:8px;">${subtitle}</span>
+        </div>
+        <div style="display:flex;gap:14px;white-space:nowrap;">
+          <span style="font-size:12px;font-weight:600;color:${colorLight};">${pct.toFixed(1)}% vested (${fmtShares(vestedShares)} shares)</span>
+          <span style="font-size:12px;font-weight:600;color:#e3b341;">${unvestedPct}% unvested · ${fmtMoneyFull(unvestedValue)}</span>
+        </div>
+      </div>
+      <div style="height:8px;background:#1c2128;border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${pct.toFixed(1)}%;background:linear-gradient(90deg,${colorDark},${colorLight});border-radius:4px;transition:width 0.4s ease;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;">
+        <span style="font-size:11px;color:#484f58;">0%</span>
+        <span style="font-size:11px;color:#484f58;">${fmtShares(unvestedShares)} shares unvested</span>
+        <span style="font-size:11px;color:#484f58;">100%</span>
+      </div>
+    </div>`;
+}
+
+// ─── Quarterly Run-Rate Builder ───────────────────────────────────
+function buildQuarterlyRunRate(initialShares, refreshers, targetMonth, stockPrice) {
+  const rows = [];
+  let totalQuarterly = 0;
+
+  // Initial grant: 6.25% per quarter of total shares, capped at remaining unvested
+  const initVested        = initialVestedAt(initialShares, targetMonth);
+  const initRemaining     = Math.max(initialShares - initVested, 0);
+  const initQtrShares     = Math.min(initialShares * 0.0625, initRemaining);
+  const initQtrValue      = initQtrShares * stockPrice;
+  if (initQtrShares > 0.01) {
+    rows.push({ label: 'Initial Grant', shares: initQtrShares, value: initQtrValue });
+    totalQuarterly += initQtrValue;
+  }
+
+  // Each refresher that has been granted
+  for (const r of refreshers) {
+    if (r.grantMonth > targetMonth) continue;
+    const rVested      = refresherVestedAt(r.shares, r.grantMonth, targetMonth);
+    const rRemaining   = Math.max(r.shares - rVested, 0);
+    const rQtrShares   = Math.min(r.shares * 0.0625, rRemaining);
+    const rQtrValue    = rQtrShares * stockPrice;
+    if (rQtrShares > 0.01) {
+      rows.push({ label: `Year ${r.year} Refresher`, shares: rQtrShares, value: rQtrValue });
+      totalQuarterly += rQtrValue;
+    }
+  }
+
+  if (rows.length === 0) {
+    return `<div style="font-size:13px;color:#484f58;padding:8px 0;">All grants fully vested at this point.</div>`;
+  }
+
+  const rowsHTML = rows.map(r => `
+    <div class="result-row">
+      <span class="lbl">${r.label}<span class="sub">${fmtShares(r.shares)} shares/quarter</span></span>
+      <span class="val">${fmtMoneyFull(r.value)}</span>
+    </div>`).join('');
+
+  return `
+    ${rowsHTML}
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 4px;margin-top:4px;border-top:1px dashed #30363d;">
+      <span style="font-size:14px;font-weight:700;color:#c9d1d9;">Total quarterly vesting value</span>
+      <span style="font-size:18px;font-weight:800;color:#3fb950;">${fmtMoneyFull(totalQuarterly)}</span>
+    </div>
+    <div style="font-size:12px;color:#484f58;margin-top:4px;">Annualized equity run-rate: <span style="color:#6e7681;font-weight:600;">${fmtMoneyFull(totalQuarterly * 4)}</span>/yr</div>`;
+}
+
+// ─── Main Calculate ───────────────────────────────────────────────
+function calculate() {
+  // ── Read base inputs
+  const baseSalary0       = parseFloat(document.getElementById('baseSalary').value)      || 0;
+  const signOnBonus       = parseFloat(document.getElementById('signOnBonus').value)     || 0;
+  const bonusTargetPct    = (parseFloat(document.getElementById('bonusPct').value)       || 0) / 100;
+  const initialGrant      = parseFloat(document.getElementById('initialGrant').value)    || 0;
+  const initialStockPrice = parseFloat(document.getElementById('initialStockPrice').value) || 1;
+
+  if (selected.size === 0) {
+    document.getElementById('results').innerHTML = `
+      <div class="card"><div class="empty-state">Select at least one time period above, then click Calculate.</div></div>`;
+    return;
+  }
+
+  const maxMonth = Math.max(...selected);
+  const maxYear  = yearOf(maxMonth);
+
+  // ── Build per-year data with defaults
+  const yearData = {};
+  for (let y = 1; y <= maxYear; y++) {
+    const baseEl       = document.getElementById(`y${y}_base`);
+    const bonusEl      = document.getElementById(`y${y}_bonusPayout`);
+    const priceEl      = document.getElementById(`y${y}_price`);
+    const refresherEl  = document.getElementById(`y${y}_refresher`);
+
+    yearData[y] = {
+      base:            baseEl        ? (parseFloat(baseEl.value)       || null) : null,
+      bonusPayoutPct:  bonusEl       ? (parseFloat(bonusEl.value)      || null) : null,
+      price:           priceEl       ? (parseFloat(priceEl.value)      || null) : null,
+      refresherPct:    refresherEl   ? (parseFloat(refresherEl.value)  || 35)   : 35,
+      priceWasDefault: false,
+    };
+  }
+
+  // ── Fill missing stock prices (50% increase from prior year)
+  let prevPrice = initialStockPrice;
+  for (let y = 1; y <= maxYear; y++) {
+    if (!yearData[y].price) {
+      yearData[y].price           = prevPrice * 1.5;
+      yearData[y].priceWasDefault = true;
+    }
+    prevPrice = yearData[y].price;
+  }
+
+  // ── Build initial grant shares
+  const initialShares = initialGrant / initialStockPrice;
+
+  // ── Build refresher grants
+  // Year Y refresher is awarded at the Y-year anniversary mark (month Y*12)
+  // at that year's end stock price, and vests quarterly from that date with no cliff.
+  const refreshers = [];
+  for (let y = 1; y <= maxYear; y++) {
+    const grantMonth  = y * 12;
+    const grantPrice  = yearData[y].price;
+    const grantValue  = initialGrant * (yearData[y].refresherPct / 100);
+    const shares      = grantValue / grantPrice;
+    refreshers.push({ year: y, grantMonth, grantPrice, grantValue, shares });
+  }
+
+  // ── Render results for each selected period
+  const sortedPeriods = [...selected].sort((a, b) => a - b);
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = '';
+
+  if (sortedPeriods.length > 0) {
+    const div = document.createElement('div');
+    div.className = 'section-divider';
+    div.innerHTML = '<span>Compensation Report</span>';
+    resultsEl.appendChild(div);
+  }
+
+  for (const targetMonth of sortedPeriods) {
+    const periodMeta  = TIME_PERIODS.find(p => p.months === targetMonth);
+    const isAnnual    = periodMeta.isYear;
+    const periodLen   = isAnnual ? 12 : 3;       // months in this period
+    const periodStart = targetMonth - periodLen;  // exclusive lower bound
+    const targetYear  = yearOf(targetMonth);
+
+    const yData        = yearData[targetYear];
+    const salary       = yData.base || baseSalary0;
+    const bonusPayout  = (yData.bonusPayoutPct !== null ? yData.bonusPayoutPct : 100) / 100;
+    const stockPrice   = yData.price;
+
+    // ── Cash comp (scaled to period)
+    const scale        = periodLen / 12;
+    const periodSalary = salary * scale;
+    const annualBonus  = salary * bonusTargetPct * bonusPayout;
+    const periodBonus  = annualBonus * scale;
+
+    // Sign-on: only in first 12 months
+    const periodSignOn = (periodStart < 12 && targetMonth <= 12) ? signOnBonus : 0;
+
+    // ── Initial grant vesting this period
+    const initialVestShares =
+      initialVestedAt(initialShares, targetMonth) -
+      initialVestedAt(initialShares, periodStart);
+    const initialVestValue = initialVestShares * stockPrice;
+
+    // ── Refresher vesting this period
+    const refresherRows = [];
+    let totalRefresher  = 0;
+    for (const r of refreshers) {
+      if (r.grantMonth > targetMonth) continue; // not yet granted
+
+      const sharesVested =
+        refresherVestedAt(r.shares, r.grantMonth, targetMonth) -
+        refresherVestedAt(r.shares, r.grantMonth, periodStart);
+
+      if (sharesVested < 0.01) continue;
+
+      const value = sharesVested * stockPrice;
+      refresherRows.push({ ...r, sharesVested, value });
+      totalRefresher += value;
+    }
+
+    const totalComp = periodSalary + periodBonus + periodSignOn + initialVestValue + totalRefresher;
+
+    // ── Build RSU detail rows
+    let rsuRows = '';
+    if (initialVestShares > 0.01) {
+      const totalInitialVested = initialVestedAt(initialShares, targetMonth);
+      const pct = (totalInitialVested / initialShares * 100).toFixed(1);
+      rsuRows += `
+        <tr>
+          <td>Initial Grant — ${Math.round(initialShares).toLocaleString()} shares @ ${fmtMoneyFull(initialStockPrice)}</td>
+          <td>${fmtShares(initialVestShares)} shares vest<br><span style="font-size:11px;color:#484f58;">${pct}% cumulative vested</span></td>
+          <td>${fmtMoneyFull(initialVestValue)}</td>
+        </tr>`;
+    }
+    for (const r of refresherRows) {
+      const totalRefVested = refresherVestedAt(r.shares, r.grantMonth, targetMonth);
+      const pct = (totalRefVested / r.shares * 100).toFixed(1);
+      rsuRows += `
+        <tr>
+          <td>Year ${r.year} Refresher — ${fmtShares(r.shares)} shares @ ${fmtMoneyFull(r.grantPrice)}<br>
+            <span style="font-size:11px;color:#484f58;">Grant value: ${fmtMoneyFull(r.grantValue)} · ${yearData[r.year].refresherPct}% of initial</span>
+          </td>
+          <td>${fmtShares(r.sharesVested)} shares vest<br><span style="font-size:11px;color:#484f58;">${pct}% cumulative vested</span></td>
+          <td>${fmtMoneyFull(r.value)}</td>
+        </tr>`;
+    }
+
+    const priceNote = yData.priceWasDefault
+      ? `<span style="color:#bc8cff;font-size:11px;margin-left:6px;">* auto-calculated (+50%/yr)</span>`
+      : '';
+
+    // ── Bonus detail
+    const bonusPctDisplay    = (bonusTargetPct * 100).toFixed(0);
+    const bonusPayoutDisplay = (bonusPayout * 100).toFixed(0);
+
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <div class="result-header">
+        <h3>${periodMeta.label}</h3>
+        <span class="stock-chip">Stock @ ${fmtMoneyFull(stockPrice)}${yData.priceWasDefault ? ' *' : ''}</span>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-label">💰 Cash Compensation ${isAnnual ? '(Annual)' : '(This Quarter)'}</div>
+        <div class="result-row">
+          <span class="lbl">Base Salary${!isAnnual ? `<span class="sub">${fmtMoneyFull(salary)}/yr annual rate</span>` : ''}</span>
+          <span class="val">${fmtMoneyFull(periodSalary)}</span>
+        </div>
+        <div class="result-row">
+          <span class="lbl">Annual Bonus
+            <span class="sub">${bonusPctDisplay}% target × ${bonusPayoutDisplay}% payout${!isAnnual ? ' — quarterly portion' : ''}</span>
+          </span>
+          <span class="val">${fmtMoneyFull(periodBonus)}</span>
+        </div>
+        ${periodSignOn > 0 ? `
+        <div class="result-row">
+          <span class="lbl">Sign-on Bonus</span>
+          <span class="val positive">${fmtMoneyFull(periodSignOn)}</span>
+        </div>` : ''}
+      </div>
+
+      ${rsuRows ? `
+      <div class="result-section">
+        <div class="result-section-label">📊 RSU Vesting ${isAnnual ? '(This Year)' : '(This Quarter)'}</div>
+        <table class="rsu-detail-table">
+          <thead>
+            <tr>
+              <th>Grant</th>
+              <th>Shares Vesting</th>
+              <th>Value @ Current Price</th>
+            </tr>
+          </thead>
+          <tbody>${rsuRows}</tbody>
+        </table>
+        <div style="margin-top:18px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#484f58;margin-bottom:12px;">Cumulative Vesting Status</div>
+          ${buildVestingBars(initialShares, initialStockPrice, refreshers, targetMonth, stockPrice)}
+        </div>
+      </div>
+      ` : ''}
+
+      <hr class="result-divider">
+      <div class="result-section" style="margin-top:18px;">
+        <div class="result-section-label">⏱️ Quarterly Vesting Run-Rate (from ${periodMeta.label})</div>
+        ${buildQuarterlyRunRate(initialShares, refreshers, targetMonth, stockPrice)}
+      </div>
+
+      <hr class="result-divider">
+      <div style="background:linear-gradient(135deg,#1a2744,#1e1a33);border:1px solid #30363d;border-radius:12px;padding:20px 24px;margin-top:4px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8b949e;">${isAnnual ? `Year ${targetYear}` : periodMeta.label} Expected Compensation</div>
+          <div style="font-size:12px;color:#484f58;margin-top:4px;">
+            ${fmtMoneyFull(periodSalary)} base
+            + ${fmtMoneyFull(periodBonus)} bonus
+            ${periodSignOn > 0 ? `+ ${fmtMoneyFull(periodSignOn)} sign-on` : ''}
+            + ${fmtMoneyFull(initialVestValue + totalRefresher)} RSU vesting
+          </div>
+        </div>
+        <div style="font-size:30px;font-weight:900;background:linear-gradient(135deg,#58a6ff,#bc8cff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;">${fmtMoneyFull(totalComp)}</div>
+      </div>
+
+      ${Object.values(yearData).some(d => d.priceWasDefault) ? `
+      <p class="note" style="margin-top:12px;">* Stock price was auto-calculated at +50% per year from prior known price. Enter a value in the Year panel above to use your own estimate.</p>
+      ` : ''}
+    `;
+
+    resultsEl.appendChild(card);
+  }
+
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── Init ─────────────────────────────────────────────────────────
+buildPeriodGrid();
+</script>
+</body>
+</html>
