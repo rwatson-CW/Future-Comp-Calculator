@@ -409,6 +409,274 @@ h1 {
 .vest-pill.cliff { background: #1c3152; color: #58a6ff; }
 .vest-pill.quarterly { background: #1c2128; color: #8b949e; }
 
+/* Prereq panel collapse */
+.prereq-body {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+  max-height: 0;
+  opacity: 0;
+}
+.prereq-body.open {
+  max-height: 600px;
+  opacity: 1;
+}
+.prereq-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1px solid #30363d;
+  border-radius: 7px;
+  color: #6e7681;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  margin-left: auto;
+}
+.prereq-toggle-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+.prereq-toggle-btn .arrow {
+  font-size: 10px;
+  transition: transform 0.25s;
+  display: inline-block;
+}
+.prereq-toggle-btn.open .arrow { transform: rotate(180deg); }
+
+/* Refresher toggle */
+.toggle-group {
+  display: flex;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 7px;
+  overflow: hidden;
+  width: fit-content;
+  margin-bottom: 8px;
+}
+.toggle-btn {
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: #6e7681;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.toggle-btn.active { background: #1f3a5c; color: #58a6ff; }
+
+/* Chart */
+.chart-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.chart-title { font-size: 17px; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
+.chart-subtitle { font-size: 12px; color: #6e7681; margin-bottom: 24px; }
+
+/* Chart body: Y-axis + bars side by side */
+.chart-body { display: flex; gap: 0; align-items: stretch; }
+.chart-y-axis {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  padding-bottom: 28px;
+  width: 64px;
+  flex-shrink: 0;
+}
+.chart-y-label {
+  font-size: 10px;
+  color: #484f58;
+  text-align: right;
+  padding-right: 10px;
+  line-height: 1;
+}
+.chart-plot {
+  flex: 1;
+  position: relative;
+  min-height: 320px;
+}
+/* Gridlines sit behind bars */
+.chart-gridlines {
+  position: absolute;
+  inset: 0;
+  bottom: 28px;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 0;
+}
+.chart-gridline {
+  width: 100%;
+  height: 1px;
+  background: #21262d;
+}
+/* Bars row */
+.chart-bars-row {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 0 4px;
+  z-index: 1;
+}
+.chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: calc(100% - 0px);
+  padding-bottom: 28px;
+}
+.chart-bar-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+}
+.chart-bar {
+  width: 80%;
+  max-width: 72px;
+  display: flex;
+  flex-direction: column-reverse;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.chart-bar:hover { filter: brightness(1.15); }
+.chart-bar-seg {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  transition: height 0.4s ease;
+}
+.chart-bar-seg-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  white-space: nowrap;
+  pointer-events: none;
+  padding: 2px 0;
+}
+/* Unvested segment — hatched/semi-transparent to distinguish from earned */
+.chart-bar-seg.unvested {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(0,0,0,0.18) 4px,
+    rgba(0,0,0,0.18) 8px
+  ) !important;
+  position: relative;
+}
+.chart-earned-line {
+  width: 80%;
+  max-width: 72px;
+  height: 2px;
+  background: rgba(255,255,255,0.3);
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 2;
+}
+.chart-totals {
+  text-align: center;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.chart-earned-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #58a6ff;
+  white-space: nowrap;
+}
+.chart-total-label {
+  font-size: 9px;
+  color: #6e7681;
+  white-space: nowrap;
+}
+.chart-x-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8b949e;
+  margin-top: 6px;
+  text-align: center;
+  white-space: nowrap;
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+}
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #21262d;
+}
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #8b949e;
+}
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.legend-swatch.unvested {
+  background-image: repeating-linear-gradient(
+    45deg, #e3b341 0px, #e3b341 4px, #92400e 4px, #92400e 8px
+  );
+}
+
+/* Data table */
+.chart-table-wrap { overflow-x: auto; margin-top: 24px; }
+.chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 560px;
+}
+.chart-table th {
+  text-align: right;
+  padding: 7px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #484f58;
+  border-bottom: 1px solid #21262d;
+}
+.chart-table th:first-child { text-align: left; }
+.chart-table td {
+  text-align: right;
+  padding: 8px 12px;
+  color: #8b949e;
+  border-bottom: 1px solid #1c2128;
+}
+.chart-table td:first-child { text-align: left; font-weight: 700; color: #c9d1d9; }
+.chart-table tr:last-child td { border-bottom: none; }
+.chart-table .col-total { color: #58a6ff; font-weight: 700; }
+.chart-table .col-unvested { color: #e3b341; font-weight: 700; }
+.chart-table .col-grand { color: #bc8cff; font-weight: 800; }
+
 .cumulative-bar {
   margin-top: 10px;
   height: 6px;
@@ -464,15 +732,6 @@ h1 {
           <span class="suffix">%</span>
         </div>
         <p class="hint">Target bonus as % of base salary (e.g. 25)</p>
-      </div>
-
-      <div class="form-group">
-        <label>Max Bonus Payout %</label>
-        <div class="input-wrap">
-          <input type="number" id="maxBonusPct" class="has-suffix" placeholder="" min="100" max="500">
-          <span class="suffix">%</span>
-        </div>
-        <p class="hint">Max multiplier on target bonus (e.g. 200 = 2×)</p>
       </div>
 
     </div>
@@ -564,6 +823,16 @@ const TIME_PERIODS = [
 function yearOf(m) { return Math.ceil(m / 12); }
 
 const selected = new Set();
+const refresherMode = {}; // y -> 'pct' | 'dollar'
+
+function setRefresherMode(y, mode) {
+  refresherMode[y] = mode;
+  // swap visibility without re-rendering whole panel
+  document.getElementById(`y${y}_refresher_pct_wrap`).style.display  = mode === 'pct'    ? '' : 'none';
+  document.getElementById(`y${y}_refresher_dol_wrap`).style.display  = mode === 'dollar' ? '' : 'none';
+  document.getElementById(`y${y}_mode_pct`).classList.toggle('active',    mode === 'pct');
+  document.getElementById(`y${y}_mode_dollar`).classList.toggle('active', mode === 'dollar');
+}
 
 // ─── Period Checkbox Grid ─────────────────────────────────────────
 function buildPeriodGrid() {
@@ -608,9 +877,8 @@ function renderYearPanels() {
     const panel = document.createElement('div');
     panel.className = 'year-panel ' + (hasSelected ? 'full' : 'prereq');
 
-    const tag = hasSelected
-      ? `<span class="tag tag-blue">Checkpoint data</span>`
-      : `<span class="tag tag-gray">Prerequisite — needed for calculation</span>`;
+    const curMode = refresherMode[y] || 'pct';
+    const pricePlaceholder = hasSelected ? '' : `auto +15%/yr`;
 
     const fullFields = hasSelected ? `
       <div class="form-group">
@@ -619,7 +887,7 @@ function renderYearPanels() {
           <span class="prefix">$</span>
           <input type="number" id="y${y}_base" class="has-prefix" placeholder="" min="0" step="1000">
         </div>
-        <p class="hint">Leave blank to use the base salary entered above</p>
+        <p class="hint">Leave blank → auto-calculated at +5%/yr from base salary entered above</p>
       </div>
       <div class="form-group">
         <label>Expected Bonus Payout %</label>
@@ -627,18 +895,11 @@ function renderYearPanels() {
           <input type="number" id="y${y}_bonusPayout" class="has-suffix" placeholder="" min="0" max="200">
           <span class="suffix">%</span>
         </div>
-        <p class="hint">How much of your target bonus you expect to receive (0–200%). E.g. 180 = paying out at 180% of target.</p>
+        <p class="hint">How much of your target bonus paid out (0–200%). Blank → 150%</p>
       </div>
     ` : '';
 
-    // Stock price placeholder: only show the auto-calc estimate on prereq panels
-    const pricePlaceholder = hasSelected ? '' : `e.g. auto +50%/yr`;
-
-    panel.innerHTML = `
-      <div class="year-panel-header">
-        <h3>Year ${y}</h3>
-        ${tag}
-      </div>
+    const formFields = `
       <div class="form-grid">
         ${fullFields}
         <div class="form-group">
@@ -647,21 +908,71 @@ function renderYearPanels() {
             <span class="prefix">$</span>
             <input type="number" id="y${y}_price" class="has-prefix" placeholder="${pricePlaceholder}" min="0.01" step="0.01">
           </div>
-          <p class="hint">Leave blank → auto-calculated at +50% from prior year</p>
+          <p class="hint">Leave blank → auto-calculated at +15% from prior year</p>
         </div>
         <div class="form-group">
-          <label>Year ${y} Refresher Grant %</label>
-          <div class="input-wrap">
-            <input type="number" id="y${y}_refresher" class="has-suffix" placeholder="35" min="0" max="100">
-            <span class="suffix">%</span>
+          <label>Year ${y} Refresher Grant</label>
+          <div class="toggle-group" style="margin-bottom:8px;">
+            <button id="y${y}_mode_pct"    class="toggle-btn${curMode === 'pct'    ? ' active' : ''}" onclick="setRefresherMode(${y},'pct')">%</button>
+            <button id="y${y}_mode_dollar" class="toggle-btn${curMode === 'dollar' ? ' active' : ''}" onclick="setRefresherMode(${y},'dollar')">$</button>
           </div>
-          <p class="hint">Refresher as % of initial grant (typical 24–40%). Leave blank → 35%</p>
+          <div id="y${y}_refresher_pct_wrap" style="${curMode === 'dollar' ? 'display:none' : ''}">
+            <div class="input-wrap">
+              <input type="number" id="y${y}_refresher_pct" class="has-suffix" placeholder="32.5" min="0" max="100">
+              <span class="suffix">%</span>
+            </div>
+            <p class="hint">As % of initial grant (typical 24–40%). Blank → 32.5%</p>
+          </div>
+          <div id="y${y}_refresher_dol_wrap" style="${curMode === 'pct' ? 'display:none' : ''}">
+            <div class="input-wrap">
+              <span class="prefix">$</span>
+              <input type="number" id="y${y}_refresher_dol" class="has-prefix" placeholder="" min="0" step="1000">
+            </div>
+            <p class="hint">Dollar value of refresher grant. Blank → defaults to 32.5%</p>
+          </div>
         </div>
-      </div>
-    `;
+      </div>`;
+
+    if (hasSelected) {
+      // Checkpoint panels — always expanded
+      panel.innerHTML = `
+        <div class="year-panel-header">
+          <h3>Year ${y}</h3>
+          <span class="tag tag-blue">Checkpoint data</span>
+        </div>
+        ${formFields}`;
+    } else {
+      // Prereq panels — collapsed by default, expandable
+      const bodyId = `prereq-body-${y}`;
+      const btnId  = `prereq-btn-${y}`;
+      panel.innerHTML = `
+        <div class="year-panel-header" style="cursor:pointer;" onclick="togglePrereq(${y})">
+          <h3>Year ${y}</h3>
+          <span class="tag tag-gray">Prerequisite — defaults applied</span>
+          <button id="${btnId}" class="prereq-toggle-btn" onclick="event.stopPropagation();togglePrereq(${y})">
+            Customize <span class="arrow">▼</span>
+          </button>
+        </div>
+        <div id="${bodyId}" class="prereq-body">
+          <div style="padding-top:16px;">
+            ${formFields}
+          </div>
+        </div>`;
+    }
 
     container.appendChild(panel);
   }
+}
+
+function togglePrereq(y) {
+  const body = document.getElementById(`prereq-body-${y}`);
+  const btn  = document.getElementById(`prereq-btn-${y}`);
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.innerHTML = isOpen
+    ? 'Collapse <span class="arrow">▼</span>'
+    : 'Customize <span class="arrow">▼</span>';
 }
 
 // ─── Vesting Math ─────────────────────────────────────────────────
@@ -844,6 +1155,199 @@ function buildQuarterlyRunRate(initialShares, refreshers, targetMonth, stockPric
     <div style="font-size:12px;color:#484f58;margin-top:4px;">Annualized equity run-rate: <span style="color:#6e7681;font-weight:600;">${fmtMoneyFull(totalQuarterly * 4)}</span>/yr</div>`;
 }
 
+// ─── Chart ────────────────────────────────────────────────────────
+const CHART_COLORS = {
+  base:    { fill: '#2563eb', label: 'Base Salary' },
+  bonus:   { fill: '#7c3aed', label: 'Bonus' },
+  signOn:  { fill: '#d97706', label: 'Sign-on Bonus' },
+  rsu:     { fill: '#16a34a', label: 'RSU Vesting (this year)' },
+  unvested:{ fill: '#b45309', label: 'Unvested Equity (paper value)' },
+};
+
+function computeYearComp(y, baseSalary0, signOnBonus, bonusTargetPct,
+                          initialShares, initialStockPrice, refreshers, yearData) {
+  const salary      = yearData[y].base || (baseSalary0 * Math.pow(1.05, y - 1));
+  const bonusPayout = (yearData[y].bonusPayoutPct !== null ? yearData[y].bonusPayoutPct : 150) / 100;
+  const price       = yearData[y].price;
+  const fromMonth   = (y - 1) * 12;
+  const toMonth     = y * 12;
+
+  const base   = salary;
+  const bonus  = salary * bonusTargetPct * bonusPayout;
+  const signOn = y === 1 ? signOnBonus : 0;
+
+  const initVest = (initialVestedAt(initialShares, toMonth) -
+                    initialVestedAt(initialShares, fromMonth)) * price;
+
+  let refreshVest = 0;
+  for (const r of refreshers) {
+    if (r.grantMonth > toMonth) continue;
+    refreshVest += (refresherVestedAt(r.shares, r.grantMonth, toMonth) -
+                    refresherVestedAt(r.shares, r.grantMonth, fromMonth)) * price;
+  }
+  const rsu = initVest + refreshVest;
+
+  // Unvested equity at END of year y (paper value at year-y stock price)
+  const initUnvested = Math.max(initialShares - initialVestedAt(initialShares, toMonth), 0) * price;
+  let refreshUnvested = 0;
+  for (const r of refreshers) {
+    if (r.grantMonth > toMonth) continue;
+    refreshUnvested += Math.max(r.shares - refresherVestedAt(r.shares, r.grantMonth, toMonth), 0) * price;
+  }
+  const unvested = initUnvested + refreshUnvested;
+  const earned   = base + bonus + signOn + rsu;
+
+  return { base, bonus, signOn, rsu, unvested, earned, total: earned + unvested };
+}
+
+function niceGridlines(maxVal, steps) {
+  const raw  = maxVal / steps;
+  const mag  = Math.pow(10, Math.floor(Math.log10(raw)));
+  const nice = [1, 2, 2.5, 5, 10].find(f => f * mag >= raw) * mag;
+  const lines = [];
+  for (let i = 1; i <= steps; i++) {
+    const v = nice * i;
+    if (v > maxVal * 1.05) break;
+    lines.push(v);
+  }
+  return lines;
+}
+
+function renderCompChart(maxYear, baseSalary0, signOnBonus, bonusTargetPct,
+                         initialShares, initialStockPrice, refreshers, yearData) {
+  const args = [baseSalary0, signOnBonus, bonusTargetPct,
+                initialShares, initialStockPrice, refreshers, yearData];
+  const yearComps = [];
+  for (let y = 1; y <= maxYear; y++) {
+    yearComps.push({ y, ...computeYearComp(y, ...args) });
+  }
+
+  const maxTotal  = Math.max(...yearComps.map(c => c.total), 1);
+  const gridLines = niceGridlines(maxTotal, 5);
+  const chartMax  = gridLines[gridLines.length - 1] || maxTotal;
+
+  // Y-axis labels
+  const yLabels = ['0', ...gridLines.map(v => fmtMoney(v))].reverse();
+  const yAxisHTML = yLabels.map(l =>
+    `<div class="chart-y-label">${l}</div>`
+  ).join('');
+
+  // Gridlines
+  const gridHTML = gridLines.map(v => {
+    const pct = (v / chartMax * 100).toFixed(2);
+    return `<div class="chart-gridline" style="position:absolute;bottom:calc(${pct}% + 0px);left:0;right:0;"></div>`;
+  }).join('');
+
+  // Bars
+  const barsHTML = yearComps.map(c => {
+    const barPct    = (c.total  / chartMax * 100).toFixed(2);
+    const earnedPct = (c.earned / c.total  * 100).toFixed(2);
+
+    // Earned segments (bottom to top): rsu, signOn, bonus, base
+    const earnedSegs = [
+      { key: 'rsu',    val: c.rsu    },
+      { key: 'signOn', val: c.signOn },
+      { key: 'bonus',  val: c.bonus  },
+      { key: 'base',   val: c.base   },
+    ].filter(s => s.val > 1);
+
+    const earnedHTML = earnedSegs.map(s => {
+      const pct        = (s.val / c.earned * earnedPct).toFixed(2);
+      const pixelApprox = parseFloat(pct) * 3.2; // rough height in px (320px chart)
+      const showLabel  = pixelApprox > 22;
+      return `<div class="chart-bar-seg" style="height:${pct}%;background:${CHART_COLORS[s.key].fill};">
+        ${showLabel ? `<span class="chart-bar-seg-label">${fmtMoney(s.val)}</span>` : ''}
+      </div>`;
+    }).join('');
+
+    const unvestedPct = (c.unvested / c.total * 100).toFixed(2);
+    const uvPixels    = parseFloat(unvestedPct) * 3.2;
+    const uvLabel     = uvPixels > 22 ? `<span class="chart-bar-seg-label">${fmtMoney(c.unvested)}</span>` : '';
+    const unvestedHTML = c.unvested > 0 ? `
+      <div class="chart-bar-seg unvested" style="height:${unvestedPct}%;background:${CHART_COLORS.unvested.fill};">
+        ${uvLabel}
+      </div>` : '';
+
+    return `
+      <div class="chart-col" style="position:relative;">
+        <div class="chart-bar-wrap">
+          <div class="chart-totals">
+            <div class="chart-earned-label">${fmtMoney(c.earned)}</div>
+            ${c.unvested > 0 ? `<div class="chart-total-label">+${fmtMoney(c.unvested)} unvested</div>` : ''}
+          </div>
+          <div class="chart-bar" style="height:${barPct}%;width:100%;">
+            ${earnedHTML}
+            ${c.unvested > 0 ? `<div style="height:1px;background:rgba(255,255,255,0.25);width:100%;flex-shrink:0;"></div>` : ''}
+            ${unvestedHTML}
+          </div>
+        </div>
+        <div class="chart-x-label">Year ${c.y}</div>
+      </div>`;
+  }).join('');
+
+  // Legend
+  const legendHTML = Object.entries(CHART_COLORS)
+    .filter(([k]) => k !== 'signOn' || signOnBonus > 0)
+    .map(([k, v]) => k === 'unvested'
+      ? `<div class="chart-legend-item"><div class="legend-swatch unvested"></div>${v.label}</div>`
+      : `<div class="chart-legend-item"><div class="legend-swatch" style="background:${v.fill}"></div>${v.label}</div>`
+    ).join('');
+
+  // Data table
+  const hasSignOn = signOnBonus > 0;
+  const tableRows = yearComps.map(c => `
+    <tr>
+      <td>Year ${c.y}<br><span style="font-size:10px;color:#484f58;">${fmtMoneyFull(yearData[c.y].price)}/share</span></td>
+      <td>${fmtMoneyFull(c.base)}</td>
+      <td>${fmtMoneyFull(c.bonus)}</td>
+      ${hasSignOn ? `<td>${c.signOn > 0 ? fmtMoneyFull(c.signOn) : '—'}</td>` : ''}
+      <td>${fmtMoneyFull(c.rsu)}</td>
+      <td class="col-total">${fmtMoneyFull(c.earned)}</td>
+      <td class="col-unvested">${fmtMoneyFull(c.unvested)}</td>
+      <td class="col-grand">${fmtMoneyFull(c.total)}</td>
+    </tr>`).join('');
+
+  const card = document.createElement('div');
+  card.className = 'chart-card';
+  card.innerHTML = `
+    <div class="chart-title">📊 Compensation by Year</div>
+    <div class="chart-subtitle">
+      Solid segments = earned &amp; received this year. Hatched top = unvested equity (paper value at year-end price).
+      White line marks the earned/unvested boundary.
+    </div>
+    <div class="chart-body">
+      <div class="chart-y-axis">${yAxisHTML}</div>
+      <div class="chart-plot" style="min-height:320px;">
+        <div class="chart-gridlines" style="position:absolute;inset:0;bottom:28px;pointer-events:none;">
+          ${gridHTML}
+        </div>
+        <div class="chart-bars-row" style="position:absolute;inset:0;display:flex;align-items:flex-end;gap:10px;padding:0 4px;padding-bottom:28px;">
+          ${barsHTML}
+        </div>
+      </div>
+    </div>
+    <div class="chart-legend">${legendHTML}</div>
+    <div class="chart-table-wrap">
+      <table class="chart-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Year</th>
+            <th>Base</th>
+            <th>Bonus</th>
+            ${hasSignOn ? '<th>Sign-on</th>' : ''}
+            <th>RSU Vesting</th>
+            <th>Total Earned</th>
+            <th>Unvested Equity</th>
+            <th>Total w/ Unvested</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+  `;
+  return card;
+}
+
 // ─── Main Calculate ───────────────────────────────────────────────
 function calculate() {
   // ── Read base inputs
@@ -865,25 +1369,39 @@ function calculate() {
   // ── Build per-year data with defaults
   const yearData = {};
   for (let y = 1; y <= maxYear; y++) {
-    const baseEl       = document.getElementById(`y${y}_base`);
-    const bonusEl      = document.getElementById(`y${y}_bonusPayout`);
-    const priceEl      = document.getElementById(`y${y}_price`);
-    const refresherEl  = document.getElementById(`y${y}_refresher`);
+    const baseEl      = document.getElementById(`y${y}_base`);
+    const bonusEl     = document.getElementById(`y${y}_bonusPayout`);
+    const priceEl     = document.getElementById(`y${y}_price`);
+    const pctEl       = document.getElementById(`y${y}_refresher_pct`);
+    const dolEl       = document.getElementById(`y${y}_refresher_dol`);
+    const mode        = refresherMode[y] || 'pct';
+
+    // Resolve refresher % from whichever mode is active
+    let refresherPct = 32.5; // default
+    if (mode === 'dollar' && dolEl) {
+      const dolVal = parseFloat(dolEl.value) || 0;
+      if (dolVal > 0 && initialGrant > 0) {
+        refresherPct = (dolVal / initialGrant) * 100;
+      }
+      // else: blank dollar → fall back to 32.5 default
+    } else if (pctEl) {
+      refresherPct = parseFloat(pctEl.value) || 32.5;
+    }
 
     yearData[y] = {
-      base:            baseEl        ? (parseFloat(baseEl.value)       || null) : null,
-      bonusPayoutPct:  bonusEl       ? (parseFloat(bonusEl.value)      || null) : null,
-      price:           priceEl       ? (parseFloat(priceEl.value)      || null) : null,
-      refresherPct:    refresherEl   ? (parseFloat(refresherEl.value)  || 35)   : 35,
+      base:            baseEl  ? (parseFloat(baseEl.value)  || null) : null,
+      bonusPayoutPct:  bonusEl ? (parseFloat(bonusEl.value) || null) : null,
+      price:           priceEl ? (parseFloat(priceEl.value) || null) : null,
+      refresherPct,
       priceWasDefault: false,
     };
   }
 
-  // ── Fill missing stock prices (50% increase from prior year)
+  // ── Fill missing stock prices (15% increase from prior year)
   let prevPrice = initialStockPrice;
   for (let y = 1; y <= maxYear; y++) {
     if (!yearData[y].price) {
-      yearData[y].price           = prevPrice * 1.5;
+      yearData[y].price           = prevPrice * 1.15;
       yearData[y].priceWasDefault = true;
     }
     prevPrice = yearData[y].price;
@@ -924,8 +1442,8 @@ function calculate() {
     const targetYear  = yearOf(targetMonth);
 
     const yData        = yearData[targetYear];
-    const salary       = yData.base || baseSalary0;
-    const bonusPayout  = (yData.bonusPayoutPct !== null ? yData.bonusPayoutPct : 100) / 100;
+    const salary       = yData.base || (baseSalary0 * Math.pow(1.05, targetYear - 1));
+    const bonusPayout  = (yData.bonusPayoutPct !== null ? yData.bonusPayoutPct : 150) / 100;
     const stockPrice   = yData.price;
 
     // ── Cash comp (scaled to period)
@@ -1063,12 +1581,22 @@ function calculate() {
       </div>
 
       ${Object.values(yearData).some(d => d.priceWasDefault) ? `
-      <p class="note" style="margin-top:12px;">* Stock price was auto-calculated at +50% per year from prior known price. Enter a value in the Year panel above to use your own estimate.</p>
+      <p class="note" style="margin-top:12px;">* Stock price was auto-calculated at +15% per year from prior known price. Enter a value in the Year panel above to use your own estimate.</p>
       ` : ''}
     `;
 
     resultsEl.appendChild(card);
   }
+
+  // ── Chart (after all period cards)
+  const chartDivider = document.createElement('div');
+  chartDivider.className = 'section-divider';
+  chartDivider.innerHTML = '<span>Year-by-Year Overview</span>';
+  resultsEl.appendChild(chartDivider);
+  resultsEl.appendChild(
+    renderCompChart(maxYear, baseSalary0, signOnBonus, bonusTargetPct,
+                    initialShares, initialStockPrice, refreshers, yearData)
+  );
 
   resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
