@@ -738,6 +738,60 @@ h1 {
 .chart-table .col-unvested { color: #e3b341; font-weight: 700; }
 .chart-table .col-grand { color: #bc8cff; font-weight: 800; }
 
+/* Currency bar */
+.currency-bar {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding: 14px 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+}
+.curr-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.currency-bar-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #484f58;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
+.curr-divider {
+  width: 1px;
+  height: 28px;
+  background: #30363d;
+  align-self: center;
+}
+.currency-btn {
+  padding: 4px 11px;
+  border-radius: 7px;
+  border: 1px solid #30363d;
+  background: #0d1117;
+  color: #6e7681;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.currency-btn:hover { border-color: #58a6ff; color: #c9d1d9; }
+.currency-btn.active { background: #1c3152; border-color: #58a6ff; color: #58a6ff; }
+.currency-btn.active-green { background: #1a3a2a; border-color: #3fb950; color: #3fb950; }
+.currency-status {
+  margin-left: auto;
+  font-size: 11px;
+  color: #484f58;
+  font-style: italic;
+  align-self: center;
+}
+
 .cumulative-bar {
   margin-top: 10px;
   height: 6px;
@@ -760,6 +814,37 @@ h1 {
 
   <h1>Total Compensation Calculator</h1>
   <p class="subtitle">Model your full comp including salary, bonus, and RSU vesting across time horizons</p>
+
+  <!-- ── CURRENCY BAR ───────────────────────────────────────────── -->
+  <div class="currency-bar">
+    <div class="curr-group">
+      <span class="currency-bar-label">Salary &amp; Bonus in</span>
+      <button id="cash-btn-USD" class="currency-btn active" onclick="applyCashCurrency('USD')">🇺🇸 USD</button>
+      <button id="cash-btn-CAD" class="currency-btn"        onclick="applyCashCurrency('CAD')">🇨🇦 CAD</button>
+      <button id="cash-btn-PLN" class="currency-btn"        onclick="applyCashCurrency('PLN')">🇵🇱 PLN</button>
+      <button id="cash-btn-EUR" class="currency-btn"        onclick="applyCashCurrency('EUR')">🇪🇺 EUR</button>
+      <button id="cash-btn-SGD" class="currency-btn"        onclick="applyCashCurrency('SGD')">🇸🇬 SGD</button>
+    </div>
+    <div class="curr-divider"></div>
+    <div class="curr-group">
+      <span class="currency-bar-label">RSUs in</span>
+      <button id="eq-btn-USD" class="currency-btn active" onclick="applyEquityCurrency('USD')">🇺🇸 USD</button>
+      <button id="eq-btn-CAD" class="currency-btn"        onclick="applyEquityCurrency('CAD')">🇨🇦 CAD</button>
+      <button id="eq-btn-PLN" class="currency-btn"        onclick="applyEquityCurrency('PLN')">🇵🇱 PLN</button>
+      <button id="eq-btn-EUR" class="currency-btn"        onclick="applyEquityCurrency('EUR')">🇪🇺 EUR</button>
+      <button id="eq-btn-SGD" class="currency-btn"        onclick="applyEquityCurrency('SGD')">🇸🇬 SGD</button>
+    </div>
+    <div class="curr-divider"></div>
+    <div class="curr-group">
+      <span class="currency-bar-label">Display as</span>
+      <button id="curr-btn-USD" class="currency-btn active" onclick="applyCurrency('USD')">🇺🇸 USD</button>
+      <button id="curr-btn-CAD" class="currency-btn"        onclick="applyCurrency('CAD')">🇨🇦 CAD</button>
+      <button id="curr-btn-PLN" class="currency-btn"        onclick="applyCurrency('PLN')">🇵🇱 PLN</button>
+      <button id="curr-btn-EUR" class="currency-btn"        onclick="applyCurrency('EUR')">🇪🇺 EUR</button>
+      <button id="curr-btn-SGD" class="currency-btn"        onclick="applyCurrency('SGD')">🇸🇬 SGD</button>
+    </div>
+    <span id="currency-status" class="currency-status">Loading live rates…</span>
+  </div>
 
   <!-- ── BASE INPUTS ────────────────────────────────────────────── -->
   <div class="card">
@@ -828,6 +913,24 @@ h1 {
 
   </div>
 
+  <!-- ── QUICK COMP SNAPSHOT ──────────────────────────────────── -->
+  <div class="card" id="quick-snapshot-card">
+    <div class="card-title">
+      <div class="icon icon-orange">⚡</div>
+      Quick Comp Snapshot
+      <span style="font-size:12px;font-weight:400;color:#484f58;margin-left:8px;">Year 1 at-a-glance · updates as you type</span>
+    </div>
+    <div class="toggle-group" style="margin-bottom:22px;width:fit-content;">
+      <button id="qs-annual"    class="toggle-btn active" onclick="setQsPeriod('annual')">Annual</button>
+      <button id="qs-monthly"   class="toggle-btn"        onclick="setQsPeriod('monthly')">Monthly</button>
+      <button id="qs-biweekly"  class="toggle-btn"        onclick="setQsPeriod('biweekly')">Bi-weekly</button>
+      <button id="qs-weekly"    class="toggle-btn"        onclick="setQsPeriod('weekly')">Weekly</button>
+    </div>
+    <div id="qs-body">
+      <div style="color:#484f58;font-size:13px;padding:12px 0;">Enter your Base Salary, Bonus %, and RSU Grant above to see your snapshot.</div>
+    </div>
+  </div>
+
   <!-- ── TIME PERIOD SELECTION ─────────────────────────────────── -->
   <div class="card">
     <div class="card-title">
@@ -849,6 +952,110 @@ h1 {
 </div>
 
 <script>
+// ─── Currency ────────────────────────────────────────────────────
+const CURRENCY_OPTS = {
+  USD: { symbol: '$',   label: 'US Dollar'        },
+  CAD: { symbol: 'CA$', label: 'Canadian Dollar'  },
+  PLN: { symbol: 'zł',  label: 'Polish Złoty'     },
+  EUR: { symbol: '€',   label: 'Euro'             },
+  SGD: { symbol: 'S$',  label: 'Singapore Dollar' },
+};
+let currencyCode      = 'USD';   // display / output currency
+let currencyRate      = 1;       // display rate vs USD
+let currencySymbol    = '$';
+let cashCurrencyCode  = 'USD';   // salary & bonus input currency
+let equityCurrencyCode= 'USD';   // RSU / stock input currency
+
+// Convert amount from `code` currency to USD
+function toUSD(amount, code) {
+  if (!amount || code === 'USD' || !window._exchangeRates) return amount || 0;
+  return amount / (window._exchangeRates[code] || 1);
+}
+
+function resultsVisible() {
+  const r = document.getElementById('results');
+  return r && r.children.length > 1;
+}
+
+function updateInputSymbols() {
+  const cashSym = CURRENCY_OPTS[cashCurrencyCode].symbol;
+  const eqSym   = CURRENCY_OPTS[equityCurrencyCode].symbol;
+  // Main cash inputs
+  ['baseSalary','signOnBonus'].forEach(id => {
+    const el = document.getElementById(id);
+    const p  = el && el.closest('.input-wrap')?.querySelector('.prefix');
+    if (p) p.textContent = cashSym;
+  });
+  // Main equity inputs
+  ['initialGrant','initialStockPrice'].forEach(id => {
+    const el = document.getElementById(id);
+    const p  = el && el.closest('.input-wrap')?.querySelector('.prefix');
+    if (p) p.textContent = eqSym;
+  });
+  // Year panel base salary inputs
+  document.querySelectorAll('[id$="_base"]').forEach(input => {
+    const p = input.closest('.input-wrap')?.querySelector('.prefix');
+    if (p) p.textContent = cashSym;
+  });
+  // Year panel price and refresher dollar inputs
+  document.querySelectorAll('[id$="_price"],[id$="_refresher_dol"]').forEach(input => {
+    const p = input.closest('.input-wrap')?.querySelector('.prefix');
+    if (p) p.textContent = eqSym;
+  });
+}
+
+async function fetchExchangeRates() {
+  const statusEl = document.getElementById('currency-status');
+  try {
+    const res  = await fetch('https://open.er-api.com/v6/latest/USD');
+    const data = await res.json();
+    if (data && data.rates) {
+      window._exchangeRates = data.rates;
+      const updated = data.time_last_update_utc
+        ? new Date(data.time_last_update_utc).toLocaleDateString('en-US',{month:'short',day:'numeric'})
+        : 'today';
+      if (statusEl) statusEl.textContent = `Live rates as of ${updated}`;
+      // Refresh display rate now that rates are loaded
+      currencyRate = window._exchangeRates[currencyCode] || 1;
+    } else {
+      if (statusEl) statusEl.textContent = 'Could not load rates';
+    }
+  } catch(e) {
+    if (statusEl) statusEl.textContent = 'Offline — USD rates only';
+  }
+}
+
+function applyCurrency(code) {
+  currencyCode   = code;
+  currencySymbol = CURRENCY_OPTS[code].symbol;
+  currencyRate   = (window._exchangeRates && window._exchangeRates[code]) ? window._exchangeRates[code] : 1;
+  Object.keys(CURRENCY_OPTS).forEach(c => {
+    const btn = document.getElementById(`curr-btn-${c}`);
+    if (btn) btn.classList.toggle('active', c === code);
+  });
+  if (resultsVisible()) calculate();
+}
+
+function applyCashCurrency(code) {
+  cashCurrencyCode = code;
+  Object.keys(CURRENCY_OPTS).forEach(c => {
+    const btn = document.getElementById(`cash-btn-${c}`);
+    if (btn) btn.classList.toggle('active', c === code);
+  });
+  updateInputSymbols();
+  if (resultsVisible()) calculate();
+}
+
+function applyEquityCurrency(code) {
+  equityCurrencyCode = code;
+  Object.keys(CURRENCY_OPTS).forEach(c => {
+    const btn = document.getElementById(`eq-btn-${c}`);
+    if (btn) btn.classList.toggle('active', c === code);
+  });
+  updateInputSymbols();
+  if (resultsVisible()) calculate();
+}
+
 // ─── Scenario Config ──────────────────────────────────────────────
 const SCENARIOS = {
   1: { name:'',           salaryGrowth:0.03,  bonusPayout:100, stockGrowth:0.15, refresherPct:32.5, color:'#58a6ff' },
@@ -1110,15 +1317,16 @@ function vestedDelta(fn, ...args) {
 
 // ─── Formatting ───────────────────────────────────────────────────
 function fmtMoney(n) {
-  if (Math.abs(n) >= 1e6) {
-    const m = n / 1e6;
-    return '$' + (Number.isInteger(m * 1000) ? m.toFixed(3) : m.toFixed(3)).replace(/\.?0+$/, '') + 'M';
+  const v = n * currencyRate;
+  if (Math.abs(v) >= 1e6) {
+    const m = v / 1e6;
+    return currencySymbol + m.toFixed(3).replace(/\.?0+$/, '') + 'M';
   }
-  return '$' + Math.round(n).toLocaleString();
+  return currencySymbol + Math.round(v).toLocaleString();
 }
 
 function fmtMoneyFull(n) {
-  return '$' + Math.round(n).toLocaleString();
+  return currencySymbol + Math.round(n * currencyRate).toLocaleString();
 }
 
 function fmtShares(n) {
@@ -1437,15 +1645,17 @@ function readYearData(s, maxYear, initialGrant, initialStockPrice) {
     const mode    = refresherMode[`${s}_${y}`] || 'pct';
     let refresherPct = cfg.refresherPct;
     if (mode === 'dollar' && dolEl) {
-      const dv = parseFloat(dolEl.value) || 0;
+      const dv = toUSD(parseFloat(dolEl.value) || 0, equityCurrencyCode);
       if (dv > 0 && initialGrant > 0) refresherPct = (dv / initialGrant) * 100;
     } else if (pctEl) {
       refresherPct = parseFloat(pctEl.value) || cfg.refresherPct;
     }
+    const baseRaw  = baseEl  ? parseFloat(baseEl.value)  : null;
+    const priceRaw = priceEl ? parseFloat(priceEl.value) : null;
     yd[y] = {
-      base:           baseEl  ? (parseFloat(baseEl.value)  || null) : null,
-      bonusPayoutPct: bonusEl ? (parseFloat(bonusEl.value) || null) : null,
-      price:          priceEl ? (parseFloat(priceEl.value) || null) : null,
+      base:           baseRaw  ? toUSD(baseRaw,  cashCurrencyCode)   : null,
+      bonusPayoutPct: bonusEl  ? (parseFloat(bonusEl.value) || null) : null,
+      price:          priceRaw ? toUSD(priceRaw, equityCurrencyCode) : null,
       refresherPct, priceWasDefault: false,
     };
   }
@@ -1723,6 +1933,15 @@ function buildDetailHTML(r, cfg, pm, initialShares, initialStockPrice, refresher
       <div>
         <div style="font-size:13px;font-weight:700;color:#c9d1d9;">${periodLabel} Total Comp</div>
         <div style="font-size:12px;color:#484f58;margin-top:3px;">Base + Bonus${periodSignOn>0?' + Sign-on':''} + RSU Vesting</div>
+        ${isAnnual ? `<div style="font-size:12px;color:#484f58;margin-top:5px;">
+          Monthly: <span style="color:#8b949e;font-weight:700;">${fmtMoneyFull(totalComp/12)}</span>
+          &nbsp;·&nbsp;
+          Weekly: <span style="color:#8b949e;font-weight:700;">${fmtMoneyFull(totalComp/52)}</span>
+        </div>` : `<div style="font-size:12px;color:#484f58;margin-top:5px;">
+          Monthly equiv: <span style="color:#8b949e;font-weight:700;">${fmtMoneyFull(totalComp/3)}</span>
+          &nbsp;·&nbsp;
+          Weekly equiv: <span style="color:#8b949e;font-weight:700;">${fmtMoneyFull(totalComp/13)}</span>
+        </div>`}
       </div>
       <div style="font-size:22px;font-weight:800;color:#58a6ff;">${fmtMoneyFull(totalComp)}</div>
     </div>
@@ -1757,11 +1976,11 @@ function fallbackCopy(text, cb) {
 
 // ─── Main Calculate ───────────────────────────────────────────────
 function calculate() {
-  const baseSalary0       = parseFloat(document.getElementById('baseSalary').value)        || 0;
-  const signOnBonus       = parseFloat(document.getElementById('signOnBonus').value)       || 0;
-  const bonusTargetPct    = (parseFloat(document.getElementById('bonusPct').value)         || 0) / 100;
-  const initialGrant      = parseFloat(document.getElementById('initialGrant').value)      || 0;
-  const initialStockPrice = parseFloat(document.getElementById('initialStockPrice').value) || 1;
+  const baseSalary0       = toUSD(parseFloat(document.getElementById('baseSalary').value)        || 0, cashCurrencyCode);
+  const signOnBonus       = toUSD(parseFloat(document.getElementById('signOnBonus').value)       || 0, cashCurrencyCode);
+  const bonusTargetPct    = (parseFloat(document.getElementById('bonusPct').value)                || 0) / 100;
+  const initialGrant      = toUSD(parseFloat(document.getElementById('initialGrant').value)      || 0, equityCurrencyCode);
+  const initialStockPrice = toUSD(parseFloat(document.getElementById('initialStockPrice').value) || 1, equityCurrencyCode);
 
   if (selected.size === 0) {
     document.getElementById('results').innerHTML =
@@ -1858,8 +2077,101 @@ function calculate() {
 }
 
 
+// ─── Quick Comp Snapshot ──────────────────────────────────────────
+let qsPeriod = 'annual';
+
+function setQsPeriod(p) {
+  qsPeriod = p;
+  ['annual','monthly','biweekly','weekly'].forEach(x => {
+    document.getElementById(`qs-${x}`)?.classList.toggle('active', x === p);
+  });
+  updateQuickSnapshot();
+}
+
+function updateQuickSnapshot() {
+  const body = document.getElementById('qs-body');
+  if (!body) return;
+
+  const base     = toUSD(parseFloat(document.getElementById('baseSalary').value)    || 0, cashCurrencyCode);
+  const bonusPct = (parseFloat(document.getElementById('bonusPct').value)           || 0) / 100;
+  const signOn   = toUSD(parseFloat(document.getElementById('signOnBonus').value)   || 0, cashCurrencyCode);
+  const grant    = toUSD(parseFloat(document.getElementById('initialGrant').value)  || 0, equityCurrencyCode);
+
+  if (!base && !grant) {
+    body.innerHTML = `<div style="color:#484f58;font-size:13px;padding:12px 0;">Enter your Base Salary, Bonus %, and RSU Grant above to see your snapshot.</div>`;
+    return;
+  }
+
+  const divMap  = { annual: 1, monthly: 12, biweekly: 26, weekly: 52 };
+  const lblMap  = { annual: '/ year', monthly: '/ month', biweekly: '/ bi-weekly', weekly: '/ week' };
+  const div     = divMap[qsPeriod];
+  const lbl     = lblMap[qsPeriod];
+
+  const annualBonus = base * bonusPct;
+  const annualCash  = base + annualBonus;
+  const annualRSU   = grant / 4;   // 25% cliff vests at end of Year 1
+
+  const pBase   = base       / div;
+  const pBonus  = annualBonus/ div;
+  const pCash   = annualCash / div;
+  const pRSU    = annualRSU  / div;
+  const pTotal  = pCash + pRSU;
+
+  const signOnLine = signOn > 0 ? `
+    <div class="result-row">
+      <span class="lbl">Sign-on Bonus<span class="sub">One-time · Year 1 only</span></span>
+      <span class="val positive">${fmtMoneyFull(signOn)}</span>
+    </div>` : '';
+
+  const yr1TotalNote = signOn > 0 && qsPeriod !== 'annual'
+    ? `<div style="font-size:12px;color:#484f58;margin-top:8px;">Year 1 total (incl. sign-on): <span style="color:#6e7681;font-weight:700;">${fmtMoneyFull(pTotal * div + signOn)}</span></div>`
+    : '';
+
+  body.innerHTML = `
+    <div class="result-section">
+      <div class="result-section-label">💵 Cash ${lbl}</div>
+      <div class="result-row">
+        <span class="lbl">Base Salary</span>
+        <span class="val">${fmtMoneyFull(pBase)}</span>
+      </div>
+      <div class="result-row">
+        <span class="lbl">Annual Bonus<span class="sub">${(bonusPct*100).toFixed(0)}% of base · at 100% payout</span></span>
+        <span class="val">${fmtMoneyFull(pBonus)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 4px;border-top:1px dashed #30363d;margin-top:6px;">
+        <span style="font-size:13px;font-weight:700;color:#c9d1d9;">Total Cash</span>
+        <span style="font-size:16px;font-weight:800;color:#c9d1d9;">${fmtMoneyFull(pCash)}</span>
+      </div>
+    </div>
+    <div class="result-section" style="margin-top:14px;">
+      <div class="result-section-label">📈 RSU Vesting ${lbl}</div>
+      <div class="result-row">
+        <span class="lbl">Initial Grant — Year 1<span class="sub">25% cliff vest · ${fmtMoneyFull(grant)} ÷ 4</span></span>
+        <span class="val">${fmtMoneyFull(pRSU)}</span>
+      </div>
+    </div>
+    ${signOn > 0 ? `<div class="result-section" style="margin-top:14px;"><div class="result-section-label">🎁 Sign-on</div>${signOnLine}</div>` : ''}
+    <div style="margin-top:18px;padding:14px 16px;background:#0d1117;border:1px solid #30363d;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#c9d1d9;">Total Comp ${lbl}</div>
+        <div style="font-size:12px;color:#484f58;margin-top:3px;">Cash + RSU · recurring</div>
+        ${yr1TotalNote}
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:26px;font-weight:800;color:#58a6ff;">${fmtMoneyFull(pTotal)}</div>
+        ${signOn > 0 && qsPeriod === 'annual' ? `<div style="font-size:12px;color:#3fb950;margin-top:2px;">+ ${fmtMoneyFull(signOn)} sign-on → Year 1: <strong>${fmtMoneyFull(pTotal + signOn)}</strong></div>` : ''}
+      </div>
+    </div>`;
+}
+
 // ─── Init ─────────────────────────────────────────────────────────
 buildPeriodGrid();
+fetchExchangeRates();
+
+// Wire snapshot to all relevant inputs
+['baseSalary','signOnBonus','bonusPct','initialGrant','initialStockPrice'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', updateQuickSnapshot);
+});
 </script>
 </body>
 </html>
